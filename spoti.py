@@ -157,4 +157,4 @@ if __name__ == '__main__':
             print(e)
             display_blank_screen(scrn)
             get_input()
-            time.sleep(1)
+            pygame.time.wait(2)

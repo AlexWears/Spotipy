@@ -1,4 +1,5 @@
 import os
+import time
 
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
@@ -156,4 +157,4 @@ if __name__ == '__main__':
             print(e)
             display_blank_screen(scrn)
             get_input()
-            pygame.time.wait(2)
+            time.sleep(.75)

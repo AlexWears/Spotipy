@@ -60,11 +60,11 @@ if __name__ == '__main__':
     csecret = "b4fac5179f054d9ba7eaaa8cb5b8e551"
     redirectURI = "https://localhost:8888/callback"
     username = "tr36u5t9e1cmk5mggmr31xgbe"
-    scope = "user-read-currently-playing"
+    scope = "user-read-currently-playing user-modify-playback-state"
 
     token = util.prompt_for_user_token(username, scope)
     client_credentials_manager = SpotifyClientCredentials(client_id=cid, client_secret=csecret)
-    spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(), auth=token) 
+    spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(), auth=token, auth_manager=SpotifyOAuth(cid, csecret, scope=scope))
 
     track = spotipy.Spotify(token).current_user_playing_track()
 
@@ -100,6 +100,17 @@ if __name__ == '__main__':
                     elif event.type == KEYDOWN:
                         if event.key == pygame.K_ESCAPE:
                             running = False
+                    elif event.type == pygame.MOUSEBUTTONDOWN:
+                        pos = pygame.mouse.get_pos()
+                        if pos[0] < scrn.get_width() / 3:
+                            spotipy.Spotify(token).previous_track()
+                        elif pos[0] < (scrn.get_width() / 3) * 2:
+                            try:
+                                spotipy.Spotify(token).pause_playback()
+                            except Exception as e:
+                                spotipy.Spotify(token).start_playback()
+                        else:
+                            spotipy.Spotify(token).next_track()
                     elif event.type == VIDEORESIZE:
                         scale = 1
                         if scrn.get_height() < scrn.get_width():
@@ -113,7 +124,7 @@ if __name__ == '__main__':
                         display_current_pygame_image(track, scrn, rect)
 
                 if track["item"]["id"] == spotipy.Spotify(token).current_user_playing_track()["item"]["id"]:
-                    time.sleep(1.3)
+                    pygame.time.delay(1300)
                 else:
                     track = spotipy.Spotify(token).current_user_playing_track()
 
@@ -129,6 +140,8 @@ if __name__ == '__main__':
         except Exception as e:
             print(e)
             display_blank_screen(scrn)
+            for event in pygame.event.get():
+                if event.type == KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.quit()
             time.sleep(3)
-
-            

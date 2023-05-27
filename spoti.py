@@ -83,6 +83,7 @@ def get_input():
             rect.height = rect.height * scale
             rect.width = rect.width * scale
             rect.center = scrn.get_rect().center
+
             display_current_pygame_image(track, scrn, rect)
 
 if __name__ == '__main__':
@@ -111,10 +112,10 @@ if __name__ == '__main__':
     Y = 700
 
     # Fullscreen version
-    # scrn = pygame.display.set_mode((X, Y), pygame.FULLSCREEN)
+    scrn = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
     # Size set by X and Y version
-    scrn = pygame.display.set_mode((X, Y), HWSURFACE | DOUBLEBUF | RESIZABLE)
+    # scrn = pygame.display.set_mode((X, Y), HWSURFACE | DOUBLEBUF | RESIZABLE)
 
     # Defualt rect as to not rely on track being available at first
     rect = pygame.Rect(0,0,600,600)
@@ -156,5 +157,8 @@ if __name__ == '__main__':
         except Exception as e:
             print(e)
             display_blank_screen(scrn)
-            get_input()
+            try:
+                get_input()
+            except:
+                pass
             time.sleep(.75)

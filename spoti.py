@@ -62,10 +62,10 @@ if __name__ == '__main__':
     username = "tr36u5t9e1cmk5mggmr31xgbe"
     scope = "user-read-currently-playing"
 
-    client_credentials_manager = SpotifyClientCredentials(client_id=cid, client_secret=csecret)
-    spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials()) 
-
     token = util.prompt_for_user_token(username, scope)
+    client_credentials_manager = SpotifyClientCredentials(client_id=cid, client_secret=csecret)
+    spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(), auth=token) 
+
     track = spotipy.Spotify(token).current_user_playing_track()
 
     # Init Pygame Info (For Displaying Album Art)
@@ -119,12 +119,16 @@ if __name__ == '__main__':
 
                     display_current_pygame_image(track, scrn, rect)     
 
+        except spotipy.client.SpotifyException:
+            token = util.prompt_for_user_token(username, scope)
+            client_credentials_manager = SpotifyClientCredentials(client_id=cid, client_secret=csecret)
+            spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(), auth=token) 
+
+            track = spotipy.Spotify(token).current_user_playing_track()
+
         except Exception as e:
             print(e)
             display_blank_screen(scrn)
-            client_credentials_manager = SpotifyClientCredentials(client_id=cid, client_secret=csecret)
-            spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials()) 
-
-            token = util.prompt_for_user_token(username, scope)
-            track = spotipy.Spotify(token).current_user_playing_track()
             time.sleep(3)
+
+            

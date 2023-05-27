@@ -68,7 +68,7 @@ if __name__ == '__main__':
 
     track = spotipy.Spotify(token).current_user_playing_track()
 
-    # Init Pygame Info (For Displaying Album Art)
+    # Init Pygame Info
     pygame.init()
     
     X = 800
@@ -83,7 +83,9 @@ if __name__ == '__main__':
     # Defualt rect as to not rely on track being available at first
     rect = pygame.Rect(0,0,600,600)
 
+    # Main while loop
     while True:
+        # Try to get Spotify and Pygame info
         try:
             track = spotipy.Spotify(token).current_user_playing_track()
             rect = get_current_pygame_image(track).get_rect()
@@ -92,14 +94,17 @@ if __name__ == '__main__':
             resize_pygame_image(track, scrn, rect)
             display_current_pygame_image(track, scrn, rect)
 
-            running = True
-            while running:
+            # Continuously check for track updates
+            while True:
                 for event in pygame.event.get():
+                    # Quit
                     if event.type == pygame.QUIT:
-                        running = False
+                        pygame.quit()
                     elif event.type == KEYDOWN:
                         if event.key == pygame.K_ESCAPE:
-                            running = False
+                            pygame.quit()
+
+                    # Track mouse position for song controls
                     elif event.type == pygame.MOUSEBUTTONDOWN:
                         pos = pygame.mouse.get_pos()
                         if pos[0] < scrn.get_width() / 3:
@@ -111,6 +116,8 @@ if __name__ == '__main__':
                                 spotipy.Spotify(token).start_playback()
                         else:
                             spotipy.Spotify(token).next_track()
+
+                    # Track potential screen resizes and scale art accordingly
                     elif event.type == VIDEORESIZE:
                         scale = 1
                         if scrn.get_height() < scrn.get_width():
@@ -123,14 +130,16 @@ if __name__ == '__main__':
                         rect.center = scrn.get_rect().center
                         display_current_pygame_image(track, scrn, rect)
 
+                # Track stayed the same
                 if track["item"]["id"] == spotipy.Spotify(token).current_user_playing_track()["item"]["id"]:
                     # pygame.time.delay(200)
                     pass
+                # Track changed
                 else:
                     track = spotipy.Spotify(token).current_user_playing_track()
-
                     display_current_pygame_image(track, scrn, rect)     
 
+        # Catch Spotify exceptions and attempt to get it again
         except spotipy.client.SpotifyException:
             token = util.prompt_for_user_token(username, scope)
             client_credentials_manager = SpotifyClientCredentials(client_id=cid, client_secret=csecret)
@@ -138,6 +147,7 @@ if __name__ == '__main__':
 
             track = spotipy.Spotify(token).current_user_playing_track()
 
+        # Catch all other exceptions, display a blank screen, wait and try again
         except Exception as e:
             print(e)
             display_blank_screen(scrn)

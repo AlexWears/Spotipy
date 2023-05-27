@@ -124,7 +124,8 @@ if __name__ == '__main__':
                         display_current_pygame_image(track, scrn, rect)
 
                 if track["item"]["id"] == spotipy.Spotify(token).current_user_playing_track()["item"]["id"]:
-                    pygame.time.delay(1300)
+                    # pygame.time.delay(200)
+                    pass
                 else:
                     track = spotipy.Spotify(token).current_user_playing_track()
 

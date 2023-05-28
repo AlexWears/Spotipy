@@ -30,7 +30,7 @@ def display_blank_screen(scrn):
 
 def get_current_pygame_image(track):
     # Retrieve ablum art and convert it to a usable image
-    album_art =  Image.open(urlopen(track["item"]["album"]["images"][0]["url"]))
+    album_art = Image.open(urlopen(track["item"]["album"]["images"][0]["url"]))
     mode = album_art.mode
     size = album_art.size
     data = album_art.tobytes()

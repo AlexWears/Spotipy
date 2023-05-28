@@ -118,7 +118,7 @@ if __name__ == '__main__':
     # scrn = pygame.display.set_mode((X, Y), HWSURFACE | DOUBLEBUF | RESIZABLE)
 
     # Defualt rect as to not rely on track being available at first
-    rect = pygame.Rect(0,0,600,600)
+    rect = pygame.Rect(0,0,640,640)
 
     # Main while loop
     while True:

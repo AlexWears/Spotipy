@@ -12,7 +12,7 @@ from urllib.request import urlopen
 import pygame
 from pygame.locals import *
 
-color = (20,20,20)
+color = (0,0,0)
 
 def display_current_pygame_image(track, scrn, rect):
     # Get album art

@@ -30,7 +30,15 @@ def display_blank_screen(scrn):
 
 def get_current_pygame_image(track):
     # Retrieve ablum art and convert it to a usable image
-    album_art = Image.open(urlopen(track["item"]["album"]["images"][0]["url"]))
+    album_art = None
+    try:
+        album_art = Image.open(urlopen(track["item"]["album"]["images"][0]["url"]))
+    except:
+        try:
+            album_art = Image.open(urlopen(track["item"]["images"][0]["url"]))
+        except:
+            pass
+
     mode = album_art.mode
     size = album_art.size
     data = album_art.tobytes()
@@ -103,7 +111,7 @@ if __name__ == '__main__':
     client_credentials_manager = SpotifyClientCredentials(client_id=cid, client_secret=csecret)
     spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(), auth=token, auth_manager=SpotifyOAuth(cid, csecret, scope=scope))
 
-    track = spotipy.Spotify(token).current_user_playing_track()
+    track = spotipy.Spotify(token).currently_playing(additional_types="episode")
 
     # Init Pygame Info
     pygame.init()
@@ -124,7 +132,7 @@ if __name__ == '__main__':
     while True:
         # Try to get Spotify and Pygame info
         try:
-            track = spotipy.Spotify(token).current_user_playing_track()
+            track = spotipy.Spotify(token).currently_playing(additional_types="episode")
             rect = get_current_pygame_image(track).get_rect()
             rect.height = 600
             rect.width = 600
@@ -137,12 +145,12 @@ if __name__ == '__main__':
                 get_input()
 
                 # Track stayed the same
-                if track["item"]["id"] == spotipy.Spotify(token).current_user_playing_track()["item"]["id"]:
+                if track["item"]["id"] == spotipy.Spotify(token).currently_playing(additional_types="episode")["item"]["id"]:
                     # pygame.time.delay(200)
                     pass
                 # Track changed
                 else:
-                    track = spotipy.Spotify(token).current_user_playing_track()
+                    track = spotipy.Spotify(token).currently_playing()
                     display_current_pygame_image(track, scrn, rect)     
 
         # Catch Spotify exceptions and attempt to get it again
@@ -151,7 +159,7 @@ if __name__ == '__main__':
             client_credentials_manager = SpotifyClientCredentials(client_id=cid, client_secret=csecret)
             spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(), auth=token) 
 
-            track = spotipy.Spotify(token).current_user_playing_track()
+            track = spotipy.Spotify(token).currently_playing(additional_types="episode")
 
         # Catch all other exceptions, display a blank screen, wait and try again
         except Exception as e:
